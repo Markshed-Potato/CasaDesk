@@ -5,8 +5,6 @@ A subdivision helpdesk web application prototype designed for residents to repor
 ## Features
 - **Dashboard:** Overview of account balance and quick actions.
 - **Ticketing System:** Form to report maintenance or security issues.
-- **Billing:** View association dues and checkout UI.
-- **Announcements Board:** Subdivision news and updates.
 
 ## Tech Stack
 - HTML5
