@@ -1,0 +1,39 @@
+@page "/login"
+@layout AuthLayout
+@inject HelpdeskState State
+@inject NavigationManager Navigation
+
+<PageTitle>CasaDesk | Sign In</PageTitle>
+<section class="rounded-lg border border-[#e2e5df] bg-white p-5 shadow-sm sm:p-8">
+    <h1 class="text-3xl font-bold tracking-tight">Welcome back</h1>
+    <p class="mt-2 text-sm text-[#75848a]">Sign in to view and follow your community reports.</p>
+    @if (!string.IsNullOrWhiteSpace(_error)) { <p class="mt-5 rounded-md bg-red-50 px-3 py-2.5 text-sm text-red-800" role="alert">@_error</p> }
+    <form class="mt-7 space-y-5" @onsubmit="Submit" @onsubmit:preventDefault>
+        <label class="block text-sm font-semibold">Email address<input class="@FieldClass" @bind="_email" type="email" autocomplete="email" required /></label>
+        <label class="block text-sm font-semibold">Password<input class="@FieldClass" @bind="_password" type="password" autocomplete="current-password" required /></label>
+        <button type="submit" class="w-full rounded-md bg-[#dfae2f] px-4 py-3 text-sm font-semibold text-[#203137] transition hover:bg-[#d1a125] focus:outline-none focus:ring-2 focus:ring-[#216f7d] focus:ring-offset-2">Sign In</button>
+    </form>
+    <p class="mt-6 border-t border-[#edf0eb] pt-5 text-center text-sm text-[#75848a]">New to CasaDesk? <a class="font-semibold text-[#216f7d] hover:underline" href="/register">Create an account</a></p>
+</section>
+
+@code {
+    private const string FieldClass = "mt-2 w-full rounded-md border border-[#d5deda] bg-white px-3.5 py-3 text-base font-normal outline-none transition placeholder:text-[#9aa7aa] focus:border-[#216f7d] focus:ring-2 focus:ring-[#216f7d]/15";
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string? _error;
+
+    protected override void OnInitialized()
+    {
+        if (State.IsAuthenticated) Navigation.NavigateTo("/");
+    }
+
+    private void Submit()
+    {
+        if (!State.Login(_email, _password))
+        {
+            _error = "Email or password is incorrect.";
+            return;
+        }
+        Navigation.NavigateTo("/");
+    }
+}

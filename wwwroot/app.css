@@ -2,8 +2,12 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-a, .btn-link {
+.btn-link {
     color: #006bb7;
+}
+
+.app-sidebar a {
+    color: #fff;
 }
 
 .btn-primary {

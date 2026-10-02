@@ -2,6 +2,7 @@ namespace CasaDesk.Services;
 
 public sealed class HelpdeskState
 {
+    private readonly AccountStore _accountStore;
     public static readonly string[] Categories = ["Maintenance", "Security", "Garbage", "Common Areas", "Noise"];
     public static readonly string[] Stages = ["Received", "Assigned", "In Progress", "Resolved", "Closed"];
     public static readonly (string Title, string Detail)[] NextSteps =
@@ -38,6 +39,7 @@ public sealed class HelpdeskState
     public IReadOnlyList<ReportRecord> Reports => _reports;
     public IReadOnlyList<ActivityItem> Activity => _activity;
     public bool IsAdmin { get; private set; }
+    public bool IsAuthenticated { get; private set; }
     public string ProfileName { get; set; } = "Maria Reyes";
     public string ProfileEmail { get; set; } = "maria.reyes@example.com";
     public string ProfilePhone { get; set; } = "0917 555 0142";
@@ -45,8 +47,50 @@ public sealed class HelpdeskState
     public string? Toast { get; private set; }
     public string Initials => string.Join("", ProfileName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(part => part[0])).ToUpperInvariant();
 
+    public HelpdeskState(AccountStore accountStore) => _accountStore = accountStore;
+
     public static string StageHint(string stage) => stage switch { "Received" => "Resident submits", "Assigned" => "Admin assigns", "In Progress" => "Staff works", "Resolved" => "Admin resolves", _ => "Resident confirms" };
     public ReportRecord? FindReport(int id) => _reports.FirstOrDefault(report => report.Id == id);
+
+    public bool Register(string name, string email, string password, string address)
+    {
+        if (!_accountStore.TryRegister(name, email, password, out var account))
+        {
+            Notify("An account with this email already exists.");
+            return false;
+        }
+
+        ProfileName = account!.Name;
+        ProfileEmail = account.Email;
+        ProfileAddress = string.IsNullOrWhiteSpace(address) ? "Add your block and lot" : address.Trim();
+        IsAuthenticated = true;
+        IsAdmin = false;
+        Notify("Your account is ready.");
+        return true;
+    }
+
+    public bool Login(string email, string password)
+    {
+        if (!_accountStore.TryAuthenticate(email, password, out var account))
+        {
+            Notify("Email or password is incorrect.");
+            return false;
+        }
+
+        ProfileName = account!.Name;
+        ProfileEmail = account.Email;
+        IsAuthenticated = true;
+        IsAdmin = false;
+        Notify($"Welcome back, {ProfileName.Split(' ')[0]}.");
+        return true;
+    }
+
+    public void SignOut()
+    {
+        IsAuthenticated = false;
+        IsAdmin = false;
+        Notify("You have signed out.");
+    }
 
     public void SetAdmin(bool isAdmin)
     {

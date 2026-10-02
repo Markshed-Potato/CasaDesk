@@ -1,0 +1,50 @@
+@page "/register"
+@layout AuthLayout
+@inject HelpdeskState State
+@inject NavigationManager Navigation
+
+<PageTitle>CasaDesk | Create Account</PageTitle>
+<section class="rounded-lg border border-[#e2e5df] bg-white p-5 shadow-sm sm:p-8">
+    <h1 class="text-3xl font-bold tracking-tight">Create your account</h1>
+    <p class="mt-2 text-sm text-[#75848a]">Set up your resident profile to report and track issues.</p>
+    @if (!string.IsNullOrWhiteSpace(_error)) { <p class="mt-5 rounded-md bg-red-50 px-3 py-2.5 text-sm text-red-800" role="alert">@_error</p> }
+    <form class="mt-6 grid gap-x-4 gap-y-4 sm:grid-cols-2" @onsubmit="Submit" @onsubmit:preventDefault>
+        <label class="block text-sm font-semibold">Full name<input class="@FieldClass" @bind="_name" autocomplete="name" required /></label>
+        <label class="block text-sm font-semibold">Email address<input class="@FieldClass" @bind="_email" type="email" autocomplete="email" required /></label>
+        <label class="block text-sm font-semibold sm:col-span-2">Block and lot<input class="@FieldClass" @bind="_address" placeholder="Block 4, Lot 12" autocomplete="street-address" /></label>
+        <label class="block text-sm font-semibold">Password<input class="@FieldClass" @bind="_password" type="password" autocomplete="new-password" minlength="8" required /><span class="mt-1 block text-xs font-normal text-[#75848a]">At least 8 characters.</span></label>
+        <label class="block text-sm font-semibold">Confirm password<input class="@FieldClass" @bind="_confirmPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <button type="submit" class="rounded-md bg-[#dfae2f] px-4 py-3 text-sm font-semibold text-[#203137] transition hover:bg-[#d1a125] focus:outline-none focus:ring-2 focus:ring-[#216f7d] focus:ring-offset-2 sm:col-span-2">Create Account</button>
+    </form>
+    <p class="mt-6 border-t border-[#edf0eb] pt-5 text-center text-sm text-[#75848a]">Already registered? <a class="font-semibold text-[#216f7d] hover:underline" href="/login">Sign in</a></p>
+</section>
+
+@code {
+    private const string FieldClass = "mt-2 w-full rounded-md border border-[#d5deda] bg-white px-3.5 py-3 text-base font-normal outline-none transition placeholder:text-[#9aa7aa] focus:border-[#216f7d] focus:ring-2 focus:ring-[#216f7d]/15";
+    private string _name = string.Empty;
+    private string _email = string.Empty;
+    private string _address = string.Empty;
+    private string _password = string.Empty;
+    private string _confirmPassword = string.Empty;
+    private string? _error;
+
+    protected override void OnInitialized()
+    {
+        if (State.IsAuthenticated) Navigation.NavigateTo("/");
+    }
+
+    private void Submit()
+    {
+        if (_password != _confirmPassword)
+        {
+            _error = "The passwords do not match.";
+            return;
+        }
+        if (!State.Register(_name, _email, _password, _address))
+        {
+            _error = "An account with this email already exists.";
+            return;
+        }
+        Navigation.NavigateTo("/");
+    }
+}

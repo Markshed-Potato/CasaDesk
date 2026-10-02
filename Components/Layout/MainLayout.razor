@@ -1,10 +1,11 @@
 ﻿@inherits LayoutComponentBase
 @implements IDisposable
 @inject HelpdeskState State
+@inject NavigationManager Navigation
 
-<div class="min-h-screen bg-[#f5f4ef] text-[#203137] md:flex">
+<div class="min-h-screen bg-[#f5f4ef] text-[#203137]">
     <SideNav />
-    <main class="min-w-0 flex-1 px-4 py-6 sm:px-7 lg:px-10 lg:py-8">
+    <main class="min-w-0 px-4 py-6 sm:px-7 lg:px-10 lg:py-8 md:ml-60">
         <div class="mx-auto max-w-6xl">@Body</div>
     </main>
 </div>
@@ -25,6 +26,15 @@
 
 @code {
     protected override void OnInitialized() => State.StateChanged += OnStateChanged;
+
+    protected override void OnParametersSet()
+    {
+        var path = Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].Trim('/');
+        if (!State.IsAuthenticated && path is not ("login" or "register"))
+        {
+            Navigation.NavigateTo("/login", replace: true);
+        }
+    }
 
     private void OnStateChanged() => _ = InvokeAsync(StateHasChanged);
 
