@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "4fA/TTvek+o=",
+  "success": true,
+  "projectFilePath": "D:\\school_files\\3rd_Year_1st_Sem\\CSIT321\\CasaDesk\\CasaDesk.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Racho\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.11\\microsoft.aspnetcore.app.internal.assets.10.0.11.nupkg.sha512"
+  ],
+  "logs": []
+}

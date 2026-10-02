@@ -1,0 +1,26 @@
+{
+  "name": "casadesk",
+  "version": "1.0.0",
+  "description": "A subdivision helpdesk web application prototype designed for residents to report issues, pay fees, and view community announcements.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "css": "tailwindcss -i ./input.css -o ./wwwroot/tailwind.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Markshed-Potato/CasaDesk.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Markshed-Potato/CasaDesk/issues"
+  },
+  "homepage": "https://github.com/Markshed-Potato/CasaDesk#readme",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

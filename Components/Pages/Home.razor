@@ -1,0 +1,116 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>CasaDesk | Resident Dashboard</PageTitle>
+
+<div class="min-h-screen bg-[#f5f4ef] text-[#203137] md:flex">
+    <aside class="flex w-full shrink-0 flex-col bg-[#216f7d] text-white md:min-h-screen md:w-60">
+        <div class="flex items-center gap-3 px-4 py-4 md:px-5 md:pt-6">
+            <span class="grid size-8 place-items-center rounded-md bg-[#dfae2f] font-black text-[#174c57]">C</span>
+            <span class="font-semibold">CasaDesk</span>
+            @if (_isAdmin) { <span class="ml-auto rounded-full bg-[#dfae2f] px-2 py-1 text-[10px] font-bold uppercase text-[#174c57]">Admin</span> }
+        </div>
+        <nav class="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-1 md:flex-col md:py-7" aria-label="Main navigation">
+            @if (_isAdmin)
+            {
+                <button class="@NavClass("admin")" @onclick="NavigateAdmin">Report Pipeline</button>
+                <button class="@NavClass("admin-detail")" @onclick="NavigateAdminDetail">Report Detail</button>
+            }
+            else
+            {
+                <button class="@NavClass("dashboard")" @onclick="NavigateDashboard">My Reports</button>
+                <button class="@NavClass("new-report")" @onclick="StartNewReport">Report an Issue</button>
+                <button class="@NavClass("profile")" @onclick="NavigateProfile">My Profile</button>
+            }
+        </nav>
+        <div class="hidden space-y-3 px-4 pb-5 md:block">
+            <button class="w-full rounded-md border border-white/50 px-3 py-2 text-xs hover:bg-white/10" @onclick="ToggleRole">Switch to @(_isAdmin ? "Resident" : "Admin") View</button>
+            <div class="flex items-center gap-3 rounded-md bg-white px-3 py-2 text-[#203137]"><span class="grid size-8 place-items-center rounded-full bg-[#dfae2f] font-semibold text-white">@Initials</span><span class="min-w-0 text-xs"><strong class="block truncate">@ProfileName</strong><span class="block truncate text-[#718187]">@(_isAdmin ? "HOA Administrator" : "Block 4, Lot 12")</span></span></div>
+            <button class="text-xs text-white/75 hover:text-white" @onclick="SignOut">Sign out</button>
+        </div>
+        <button class="mx-3 mb-3 rounded-md border border-white/50 px-3 py-2 text-xs md:hidden" @onclick="ToggleRole">Switch to @(_isAdmin ? "Resident" : "Admin") View</button>
+    </aside>
+
+    <main class="min-w-0 flex-1 px-4 py-6 sm:px-7 lg:px-10 lg:py-8">
+        <div class="mx-auto max-w-6xl">
+            <header class="mb-6 flex flex-wrap items-start justify-between gap-4">
+                <div><p class="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#648087]">CasaDesk <span class="px-1 text-[#b9c0ba]">/</span> @PageLabel</p><h1 class="text-2xl font-bold tracking-tight sm:text-[28px]">@PageTitleText</h1><p class="mt-1 max-w-2xl text-sm text-[#75848a]">@PageSubtitle</p></div>
+                @if (_page == "dashboard") { <button class="rounded-md bg-[#dfae2f] px-4 py-2.5 text-sm font-semibold hover:bg-[#d1a125]" @onclick="StartNewReport">+ New Report</button> }
+                else { <button class="rounded-md border border-[#216f7d] px-4 py-2 text-sm font-semibold text-[#216f7d] hover:bg-[#e5efed]" @onclick="GoBack">@BackButtonText</button> }
+            </header>
+
+            @if (_page == "dashboard")
+            {
+                <div class="space-y-5">
+                    <section class="grid gap-4">
+                        @foreach (var report in Reports.Take(2))
+                        {
+                            <article class="rounded-lg border border-[#e2e5df] bg-white p-4 shadow-sm sm:p-5">
+                                <div class="flex flex-wrap items-start justify-between gap-3"><div><h2 class="font-semibold">@report.Title</h2><p class="mt-1 text-xs text-[#77878d]">@report.Location <span class="px-1">·</span> @report.Category <span class="px-1">·</span> Submitted @report.Submitted</p></div><span class="rounded-full px-2.5 py-1 text-[11px] font-semibold @StatusBadgeClass(report.Status)">@report.Status</span></div>
+                                <div class="mt-4 grid grid-cols-5 gap-1" aria-label="Report status: @report.Status">
+                                    @foreach (var stage in Stages) { <div class="min-w-0"><div class="h-[3px] rounded-full @StepBarClass(report, stage)"></div><p class="mt-1.5 truncate text-[11px] font-semibold @StepTextClass(report, stage)">@stage</p><p class="hidden text-[10px] text-[#819096] sm:block">@StageHint(stage)</p></div> }
+                                </div>
+                                <div class="mt-4 flex flex-wrap items-center justify-between gap-3"><p class="text-xs text-[#718187]">@report.Summary</p><button class="rounded-md border border-[#216f7d] px-3 py-2 text-xs font-semibold text-[#216f7d] hover:bg-[#e5efed]" @onclick="() => OpenReport(report.Id)">Track Report</button></div>
+                            </article>
+                        }
+                    </section>
+                    <section class="rounded-lg border border-[#e2e5df] bg-white p-4 shadow-sm sm:p-5"><div class="mb-4 flex items-center justify-between"><h2 class="font-semibold">Recent Activity</h2><span class="text-xs text-[#819096]">Latest updates</span></div><div class="divide-y divide-[#edf0eb]">
+                        @foreach (var item in Activity.Take(5)) { <button class="flex w-full items-start gap-3 py-3 text-left first:pt-0 last:pb-0" @onclick="() => OpenReport(item.ReportId)"><span class="mt-1.5 size-2 shrink-0 rounded-full @(item.IsGold ? "bg-[#dfae2f]" : "bg-[#216f7d]")"></span><span class="min-w-0 flex-1"><strong class="block text-sm">@item.Title</strong><span class="mt-0.5 block text-xs text-[#77878d]">@item.Detail</span></span><span class="shrink-0 text-xs text-[#819096]">@item.Date</span></button> }
+                    </div></section>
+                </div>
+            }
+            else if (_page == "new-report")
+            {
+                <div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(250px,0.8fr)]">
+                    <section class="rounded-lg border border-[#e2e5df] bg-white p-5 shadow-sm sm:p-6"><form class="space-y-4" @onsubmit="SubmitReport" @onsubmit:preventDefault>
+                        <fieldset><legend class="mb-2 text-xs font-semibold">Category</legend><div class="flex flex-wrap gap-2">@foreach (var category in Categories) { <button type="button" class="rounded-full border px-3 py-1.5 text-xs font-medium @CategoryClass(category)" @onclick="() => _category = category">@category</button> }</div></fieldset>
+                        <div class="grid gap-4 sm:grid-cols-2"><label class="block text-xs font-semibold">Location<input class="@FieldClass" @bind="_location" placeholder="Block 4, Main Road" required /></label><label class="block text-xs font-semibold">Priority<select class="@FieldClass" @bind="_priority"><option>Normal</option><option>Urgent</option></select></label></div>
+                        <label class="block text-xs font-semibold">Title<input class="@FieldClass" @bind="_newTitle" placeholder="For example: Streetlight not working" required /></label>
+                        <label class="block text-xs font-semibold">Description<textarea class="@FieldClass min-h-28 resize-y" @bind="_newDescription" placeholder="Describe the problem and when it started." required></textarea></label>
+                        <label class="relative flex min-h-24 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-[#d5a323] bg-[#fbf4df] px-4 py-4 text-center hover:bg-[#f8edca]"><InputFile class="absolute inset-0 h-full w-full cursor-pointer opacity-0" accept="image/png,image/jpeg" OnChange="HandlePhotoSelected" /><span class="text-sm font-semibold text-[#9a7415]">@(_photoName ?? "Click to upload a photo (optional)")</span><span class="mt-1 text-[11px] text-[#8c8c7e]">PNG or JPG, up to 5 MB</span></label>
+                        <div class="flex justify-end gap-2"><button type="button" class="rounded-md border border-[#216f7d] px-4 py-2 text-sm font-semibold text-[#216f7d] hover:bg-[#e5efed]" @onclick="NavigateDashboard">Cancel</button><button type="submit" class="rounded-md bg-[#dfae2f] px-4 py-2 text-sm font-semibold hover:bg-[#d1a125]">Submit Report</button></div>
+                    </form></section>
+                    <aside class="space-y-4"><section class="rounded-lg border border-[#e2e5df] bg-white p-5"><h2 class="font-semibold">What happens next</h2><ol class="mt-4 space-y-4">@foreach (var step in NextSteps) { <li class="flex gap-3"><span class="mt-1 size-2 rounded-full bg-[#216f7d]"></span><span><strong class="block text-xs">@step.Title</strong><span class="mt-0.5 block text-xs text-[#7b898e]">@step.Detail</span></span></li> }</ol></section><section class="rounded-lg border border-[#e8c66b] bg-[#fbf4df] p-4"><h2 class="text-sm font-semibold">Emergency?</h2><p class="mt-1.5 text-xs leading-5 text-[#7b898e]">Call the security desk instead of filing a report.</p><a href="tel:5550100" class="mt-3 inline-flex rounded-md bg-[#dfae2f] px-3 py-2 text-xs font-semibold">Call Security Desk</a></section></aside>
+                </div>
+            }
+            else if (_page == "track" || _page == "admin-detail")
+            {
+                <div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(270px,0.8fr)]"><div class="space-y-5">
+                    <section class="rounded-lg border border-[#e2e5df] bg-white p-5 sm:p-6"><div class="flex flex-wrap items-start justify-between gap-3"><div><h2 class="text-lg font-bold">@SelectedReport.Title</h2><p class="mt-1 text-xs text-[#77878d]">Report #CD-@SelectedReport.Id <span class="px-1">·</span> @SelectedReport.Location <span class="px-1">·</span> Submitted @SelectedReport.Submitted</p></div><span class="rounded-full px-2.5 py-1 text-[11px] font-semibold @StatusBadgeClass(SelectedReport.Status)">@SelectedReport.Status</span></div><div class="mt-5 grid grid-cols-5 gap-1">@foreach (var stage in Stages) { <div class="min-w-0"><div class="h-[3px] rounded-full @StepBarClass(SelectedReport, stage)"></div><p class="mt-1.5 truncate text-[11px] font-semibold @StepTextClass(SelectedReport, stage)">@stage</p><p class="hidden text-[10px] text-[#819096] sm:block">@StageHint(stage)</p></div> }</div><p class="mt-4 rounded-md bg-[#fbf4df] px-3 py-2.5 text-xs text-[#96751d]">@SelectedReport.Summary</p></section>
+                    <section class="rounded-lg border border-[#e2e5df] bg-white p-5 sm:p-6"><h2 class="font-semibold">Timeline</h2><ol class="mt-4 space-y-4">@foreach (var update in SelectedReport.Updates.OrderByDescending(item => item.Sequence)) { <li class="flex gap-3"><span class="mt-1.5 size-2 shrink-0 rounded-full @(update.Sequence == SelectedReport.Updates.Max(item => item.Sequence) ? "bg-[#dfae2f]" : "bg-[#216f7d]")"></span><span class="min-w-0 flex-1"><strong class="block text-sm">@update.Title</strong><span class="mt-0.5 block text-xs text-[#7b898e]">@update.Detail</span></span><span class="shrink-0 text-[11px] text-[#819096]">@update.Date</span></li> }</ol></section>
+                </div><div class="space-y-4">
+                    @if (_isAdmin)
+                    {
+                        <section class="rounded-lg border border-[#e2e5df] bg-white p-5"><h2 class="font-semibold">Manage report</h2><label class="mt-4 block text-xs font-semibold">Assigned staff<select class="@FieldClass" @bind="SelectedReport.AssignedTo" @bind:after="SaveAssignee"><option>Unassigned</option><option>R. Santos</option><option>Jose Dela Cruz</option><option>M. Reyes</option></select></label><p class="mt-3 text-xs text-[#77878d]">Current stage: <strong class="text-[#203137]">@SelectedReport.Status</strong></p><button class="mt-4 w-full rounded-md bg-[#dfae2f] px-3 py-2.5 text-sm font-semibold" @onclick="AdvanceStatus">Advance to next stage</button></section>
+                    }
+                    else
+                    {
+                        <section class="rounded-lg border border-[#e2e5df] bg-white p-5">
+                            <h2 class="font-semibold">Your Action</h2>
+                            <p class="mt-2 text-xs leading-5 text-[#77878d]">@(SelectedReport.Status == "Resolved" ? "The work is marked resolved. Confirm if the repair is complete." : SelectedReport.Status == "Closed" ? "This report is closed. Reopen it if the issue has returned." : "We will notify you when the report changes stage.")</p>
+                            @if (SelectedReport.Status == "Resolved")
+                            {
+                                <button class="mt-3 w-full rounded-md bg-[#dfae2f] px-3 py-2.5 text-sm font-semibold" @onclick="ConfirmFixed">Confirm Fixed</button>
+                            }
+                            else if (SelectedReport.Status == "Closed" || SelectedReport.Status == "In Progress")
+                            {
+                                <button class="mt-3 w-full rounded-md border border-[#216f7d] px-3 py-2.5 text-sm font-semibold text-[#216f7d]" @onclick="ReopenReport">Reopen Report</button>
+                            }
+                        </section>
+                        <section class="rounded-lg border border-[#e2e5df] bg-white p-5"><h2 class="font-semibold">Message the Admin</h2><label class="mt-3 block text-xs font-semibold">Message<textarea class="@FieldClass min-h-20" @bind="_messageText" placeholder="Add an update or question."></textarea></label><button class="mt-3 rounded-md bg-[#dfae2f] px-3 py-2 text-xs font-semibold" @onclick="SendMessage">Send Message</button>@if (SelectedReport.Messages.Count > 0) { <div class="mt-4 space-y-2 border-t border-[#edf0eb] pt-3">@foreach (var message in SelectedReport.Messages) { <p class="rounded-md bg-[#f5f7f4] p-2.5 text-xs"><strong>@message.Sender</strong><span class="float-right text-[#819096]">@message.Date</span><span class="mt-1 block text-[#63747a]">@message.Text</span></p> }</div> }</section>
+                        <section class="rounded-lg border border-[#e2e5df] bg-white p-5"><h2 class="font-semibold">Assigned Staff</h2><p class="mt-3 flex items-center gap-2 text-xs"><span class="size-3 rounded-full bg-[#216f7d]"></span>@(SelectedReport.AssignedTo == "Unassigned" ? "Awaiting assignment" : $"{SelectedReport.AssignedTo}, Maintenance")</p></section>
+                    }
+                </div></div>
+            }
+            else if (_page == "profile")
+            {
+                <section class="max-w-3xl rounded-lg border border-[#e2e5df] bg-white p-5 shadow-sm sm:p-7"><div class="mb-5 border-b border-[#edf0eb] pb-4"><h2 class="font-semibold">Personal Information</h2><p class="mt-1 text-xs text-[#77878d]">Your details and household information.</p></div><form class="grid gap-4 sm:grid-cols-2" @onsubmit="SaveProfile" @onsubmit:preventDefault><label class="text-xs font-semibold">Full name<input class="@FieldClass" @bind="ProfileName" required /></label><label class="text-xs font-semibold">Email address<input class="@FieldClass" @bind="_profileEmail" type="email" required /></label><label class="text-xs font-semibold">Phone number<input class="@FieldClass" @bind="_profilePhone" type="tel" /></label><label class="text-xs font-semibold">Block and lot<input class="@FieldClass" @bind="_profileAddress" /></label><div class="flex justify-end sm:col-span-2"><button type="submit" class="rounded-md bg-[#dfae2f] px-4 py-2.5 text-sm font-semibold">Save Changes</button></div></form></section>
+            }
+            else if (_page == "admin")
+            {
+                <section class="rounded-lg border border-[#e2e5df] bg-white p-4 shadow-sm sm:p-5"><div class="mb-5 flex flex-wrap items-center justify-between gap-3"><div><h2 class="font-semibold">Report Pipeline</h2><p class="mt-1 text-xs text-[#77878d]">Move each report forward. Residents see every change.</p></div><button class="rounded-md bg-[#dfae2f] px-3 py-2 text-xs font-semibold" @onclick="() => OpenReport(Reports[0].Id, true)">Open latest report</button></div><div class="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter reports">@foreach (var filter in PipelineFilters) { <button class="rounded-full border px-3 py-1.5 text-xs font-semibold @FilterClass(filter)" @onclick="() => _activeFilter = filter">@filter <span class="ml-1 opacity-70">@FilterCount(filter)</span></button> }</div><div class="divide-y divide-[#edf0eb]">@foreach (var report in FilteredReports) { <button class="grid w-full grid-cols-1 items-center gap-3 py-4 text-left sm:grid-cols-[minmax(0,1fr)_150px_110px]" @onclick="() => OpenReport(report.Id, true)"><span class="min-w-0"><strong class="block truncate text-sm">@report.Title</strong><span class="mt-1 block text-xs text-[#77878d]">#CD-@report.Id <span class="px-1">·</span> @report.Location <span class="px-1">·</span> @report.Category</span></span><span class="text-xs text-[#718187]">@(report.AssignedTo == "Unassigned" ? "Awaiting assignment" : report.AssignedTo)</span><span class="w-fit rounded-full px-2.5 py-1 text-[11px] font-semibold @StatusBadgeClass(report.Status)">@report.Status</span></button> }@if (!FilteredReports.Any()) { <p class="py-8 text-center text-sm text-[#77878d]">No reports in this stage.</p> }</div></section>
+            }
+        </div>
+    </main>
+    @if (!string.IsNullOrWhiteSpace(_toast)) { <div class="fixed bottom-4 right-4 z-50 flex max-w-sm items-center gap-4 rounded-md bg-[#203137] px-4 py-3 text-sm text-white shadow-lg" role="status"><span>@_toast</span><button class="text-lg leading-none text-white/70" aria-label="Dismiss notification" @onclick="() => _toast = null">×</button></div> }
+</div>
