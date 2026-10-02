@@ -174,3 +174,14 @@ C:\Users\Racho\AppData\Local\Temp\CasaDesk-auth-ui-check\CasaDesk.runtimeconfig.
 C:\Users\Racho\AppData\Local\Temp\CasaDesk-auth-ui-check\CasaDesk.dll
 C:\Users\Racho\AppData\Local\Temp\CasaDesk-auth-ui-check\CasaDesk.pdb
 D:\school_files\3rd_Year_1st_Sem\CSIT321\CasaDesk\obj\Debug\net10.0\compressed\n6zlmw8900-{0}-njyksulqyv-njyksulqyv.gz
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\appsettings.Development.json
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\appsettings.json
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\package-lock.json
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\package.json
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\CasaDesk.staticwebassets.runtime.json
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\CasaDesk.staticwebassets.endpoints.json
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\CasaDesk.exe
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\CasaDesk.deps.json
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\CasaDesk.runtimeconfig.json
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\CasaDesk.dll
+C:\Users\Racho\AppData\Local\Temp\CasaDesk-formfix-check\CasaDesk.pdb
