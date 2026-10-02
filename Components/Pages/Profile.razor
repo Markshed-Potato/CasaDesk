@@ -1,0 +1,22 @@
+@page "/profile"
+@inject HelpdeskState State
+
+<PageTitle>CasaDesk | Profile Settings</PageTitle>
+<PageHeader Section="Profile Settings" Title="Account Settings" Subtitle="Your details and household information." BackText="Back" BackHref="/" />
+
+<section class="max-w-3xl rounded-lg border border-[#e2e5df] bg-white p-5 shadow-sm sm:p-7">
+    <div class="mb-5 border-b border-[#edf0eb] pb-4"><h2 class="font-semibold">Personal Information</h2><p class="mt-1 text-xs text-[#77878d]">Your details and household information.</p></div>
+    <form class="grid gap-4 sm:grid-cols-2" @onsubmit="SaveProfile" @onsubmit:preventDefault>
+        <label class="text-xs font-semibold">Full name<input class="@FieldClass" @bind="State.ProfileName" required /></label>
+        <label class="text-xs font-semibold">Email address<input class="@FieldClass" @bind="State.ProfileEmail" type="email" required /></label>
+        <label class="text-xs font-semibold">Phone number<input class="@FieldClass" @bind="State.ProfilePhone" type="tel" /></label>
+        <label class="text-xs font-semibold">Block and lot<input class="@FieldClass" @bind="State.ProfileAddress" /></label>
+        <div class="flex justify-end sm:col-span-2"><button type="submit" class="rounded-md bg-[#dfae2f] px-4 py-2.5 text-sm font-semibold">Save Changes</button></div>
+    </form>
+</section>
+
+@code {
+    private const string FieldClass = "mt-1.5 w-full rounded-md border border-[#dce2de] px-3 py-2.5 text-sm font-normal outline-none focus:border-[#216f7d]";
+    protected override void OnInitialized() => State.SetAdmin(false);
+    private void SaveProfile() => State.Notify("Your profile details have been updated for this session.");
+}

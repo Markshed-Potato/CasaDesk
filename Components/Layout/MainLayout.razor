@@ -1,10 +1,33 @@
 ﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject HelpdeskState State
 
-@Body
+<div class="min-h-screen bg-[#f5f4ef] text-[#203137] md:flex">
+    <SideNav />
+    <main class="min-w-0 flex-1 px-4 py-6 sm:px-7 lg:px-10 lg:py-8">
+        <div class="mx-auto max-w-6xl">@Body</div>
+    </main>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(State.Toast))
+{
+    <div class="fixed bottom-4 right-4 z-50 flex max-w-sm items-center gap-4 rounded-md bg-[#203137] px-4 py-3 text-sm text-white shadow-lg" role="status">
+        <span>@State.Toast</span>
+        <button class="text-lg leading-none text-white/70 hover:text-white" aria-label="Dismiss notification" @onclick="State.ClearToast">×</button>
+    </div>
+}
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    protected override void OnInitialized() => State.StateChanged += OnStateChanged;
+
+    private void OnStateChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose() => State.StateChanged -= OnStateChanged;
+}
 

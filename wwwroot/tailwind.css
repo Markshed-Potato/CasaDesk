@@ -1196,6 +1196,9 @@
   .text-wrap {
     text-wrap: wrap;
   }
+  .\!text-\[\#203137\] {
+    color: #203137 !important;
+  }
   .text-\[\#4f754f\] {
     color: #4f754f;
   }

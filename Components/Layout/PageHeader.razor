@@ -1,0 +1,25 @@
+<header class="mb-6 flex flex-wrap items-start justify-between gap-4">
+    <div>
+        <p class="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#648087]">CasaDesk <span class="px-1 text-[#b9c0ba]">/</span> @Section</p>
+        <h1 class="text-2xl font-bold tracking-tight sm:text-[28px]">@Title</h1>
+        @if (!string.IsNullOrWhiteSpace(Subtitle)) { <p class="mt-1 max-w-2xl text-sm text-[#75848a]">@Subtitle</p> }
+    </div>
+    @if (!string.IsNullOrWhiteSpace(ActionText))
+    {
+        <a href="@ActionHref" class="rounded-md bg-[#dfae2f] px-4 py-2.5 text-sm font-semibold text-[#203137] hover:bg-[#d1a125]">@ActionText</a>
+    }
+    else if (!string.IsNullOrWhiteSpace(BackText))
+    {
+        <a href="@BackHref" class="rounded-md border border-[#216f7d] px-4 py-2 text-sm font-semibold text-[#216f7d] hover:bg-[#e5efed]">@BackText</a>
+    }
+</header>
+
+@code {
+    [Parameter, EditorRequired] public string Section { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+    [Parameter] public string? Subtitle { get; set; }
+    [Parameter] public string? ActionText { get; set; }
+    [Parameter] public string? ActionHref { get; set; }
+    [Parameter] public string? BackText { get; set; }
+    [Parameter] public string? BackHref { get; set; }
+}

@@ -1,10 +1,12 @@
 using CasaDesk.Components;
+using CasaDesk.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddScoped<HelpdeskState>();
 
 var app = builder.Build();
 

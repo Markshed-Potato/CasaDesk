@@ -1,0 +1,48 @@
+@page "/reports/{Id:int}"
+@inject HelpdeskState State
+@inject NavigationManager Navigation
+
+<PageTitle>CasaDesk | Track Report</PageTitle>
+@if (Report is { } report)
+{
+    <PageHeader Section="Track Report" Title="@report.Title" Subtitle="@TrackingSubtitle(report)" BackText="Back to My Reports" BackHref="/" />
+    <div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(270px,0.8fr)]">
+        <ReportSummary Report="report" />
+        <div class="space-y-4">
+            <section class="rounded-lg border border-[#e2e5df] bg-white p-5"><h2 class="font-semibold">Your Action</h2><p class="mt-2 text-xs leading-5 text-[#77878d]">@(report.Status == "Resolved" ? "The work is marked resolved. Confirm if the repair is complete." : report.Status == "Closed" ? "This report is closed. Reopen it if the issue has returned." : "We will notify you when the report changes stage.")</p>
+                @if (report.Status == "Resolved") { <button class="mt-3 w-full rounded-md bg-[#dfae2f] px-3 py-2.5 text-sm font-semibold" @onclick="() => State.ConfirmFixed(report)">Confirm Fixed</button> }
+                else if (report.Status is "Closed" or "In Progress") { <button class="mt-3 w-full rounded-md border border-[#216f7d] px-3 py-2.5 text-sm font-semibold text-[#216f7d]" @onclick="() => State.ReopenReport(report)">Reopen Report</button> }
+            </section>
+            <section class="rounded-lg border border-[#e2e5df] bg-white p-5"><h2 class="font-semibold">Message the Admin</h2><label class="mt-3 block text-xs font-semibold">Message<textarea class="@FieldClass min-h-20" @bind="_message" placeholder="Add an update or question."></textarea></label><button class="mt-3 rounded-md bg-[#dfae2f] px-3 py-2 text-xs font-semibold" @onclick="SendMessage">Send Message</button>
+                @if (report.Messages.Count > 0) { <div class="mt-4 space-y-2 border-t border-[#edf0eb] pt-3">@foreach (var message in report.Messages) { <p class="rounded-md bg-[#f5f7f4] p-2.5 text-xs"><strong>@message.Sender</strong><span class="float-right text-[#819096]">@message.Date</span><span class="mt-1 block text-[#63747a]">@message.Text</span></p> }</div> }
+            </section>
+            <section class="rounded-lg border border-[#e2e5df] bg-white p-5"><h2 class="font-semibold">Assigned Staff</h2><p class="mt-3 flex items-center gap-2 text-xs"><span class="size-3 rounded-full bg-[#216f7d]"></span>@(report.AssignedTo == "Unassigned" ? "Awaiting assignment" : $"{report.AssignedTo}, Maintenance")</p></section>
+        </div>
+    </div>
+}
+
+@code {
+    private const string FieldClass = "mt-1.5 w-full rounded-md border border-[#dce2de] bg-white px-3 py-2.5 text-sm font-normal outline-none placeholder:text-[#9aa7aa] focus:border-[#216f7d]";
+    [Parameter] public int Id { get; set; }
+    private string _message = string.Empty;
+    private HelpdeskState.ReportRecord? Report => State.FindReport(Id);
+    private static string TrackingSubtitle(HelpdeskState.ReportRecord report) => $"Report #CD-{report.Id}. Submitted {report.Submitted}.";
+
+    protected override void OnInitialized() => State.SetAdmin(false);
+
+    protected override void OnParametersSet()
+    {
+        if (Report is null) Navigation.NavigateTo("/");
+    }
+
+    private void SendMessage()
+    {
+        if (Report is not { } report) return;
+        if (!State.AddMessage(report, _message))
+        {
+            State.Notify("Write a message before sending.");
+            return;
+        }
+        _message = string.Empty;
+    }
+}

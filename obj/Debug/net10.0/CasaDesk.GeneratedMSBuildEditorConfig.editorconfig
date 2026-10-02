@@ -27,8 +27,20 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Pages/Counter.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3VudGVyLnJhem9y
+[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Layout/PageHeader.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcUGFnZUhlYWRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Layout/SideNav.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcU2lkZU5hdi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Pages/AdminPipeline.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBZG1pblBpcGVsaW5lLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Pages/AdminReportDetail.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBZG1pblJlcG9ydERldGFpbC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Pages/Error.razor]
@@ -39,16 +51,32 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Pages/NewReport.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xOZXdSZXBvcnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Pages/NotFound.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xOb3RGb3VuZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Pages/Weather.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXZWF0aGVyLnJhem9y
+[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Pages/Profile.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9maWxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Pages/TrackReport.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUcmFja1JlcG9ydC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Shared/ReportProgress.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcUmVwb3J0UHJvZ3Jlc3MucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Shared/ReportSummary.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcUmVwb3J0U3VtbWFyeS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/_Imports.razor]
@@ -58,10 +86,6 @@ build_metadata.AdditionalFiles.CssScope =
 [D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-yiuklcxfhb
-
-[D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Layout/NavMenu.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = b-5mfmg9zgyp
 
 [D:/school_files/3rd_Year_1st_Sem/CSIT321/CasaDesk/Components/Layout/ReconnectModal.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcUmVjb25uZWN0TW9kYWwucmF6b3I=

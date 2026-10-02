@@ -1,0 +1,31 @@
+@page "/admin"
+@inject HelpdeskState State
+
+<PageTitle>CasaDesk | Admin Report Pipeline</PageTitle>
+<PageHeader Section="Admin Report Pipeline" Title="Report Pipeline" Subtitle="Move each report forward. Residents see every change." ActionText="Open Streetlight Report" ActionHref="/admin/reports/1042" />
+
+<section class="rounded-lg border border-[#e2e5df] bg-white p-4 shadow-sm sm:p-5">
+    <div class="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter reports">
+        @foreach (var filter in Filters)
+        {
+            <button class="rounded-full border px-3 py-1.5 text-xs font-semibold @FilterClass(filter)" @onclick="() => _activeFilter = filter">@filter <span class="ml-1 opacity-70">@FilterCount(filter)</span></button>
+        }
+    </div>
+    <div class="divide-y divide-[#edf0eb]">
+        @foreach (var report in FilteredReports)
+        {
+            <a class="grid w-full grid-cols-1 items-center gap-3 py-4 text-left sm:grid-cols-[minmax(0,1fr)_150px_110px]" href="/admin/reports/@report.Id"><span class="min-w-0"><strong class="block truncate text-sm">@report.Title</strong><span class="mt-1 block text-xs text-[#77878d]">#CD-@report.Id <span class="px-1">·</span> @report.Location <span class="px-1">·</span> @report.Category</span></span><span class="text-xs text-[#718187]">@(report.AssignedTo == "Unassigned" ? "Awaiting assignment" : report.AssignedTo)</span><span class="w-fit rounded-full px-2.5 py-1 text-[11px] font-semibold @StatusClass(report.Status)">@report.Status</span></a>
+        }
+        @if (!FilteredReports.Any()) { <p class="py-8 text-center text-sm text-[#77878d]">No reports in this stage.</p> }
+    </div>
+</section>
+
+@code {
+    private static readonly string[] Filters = ["All", .. HelpdeskState.Stages];
+    private string _activeFilter = "All";
+    private IEnumerable<HelpdeskState.ReportRecord> FilteredReports => _activeFilter == "All" ? State.Reports : State.Reports.Where(report => report.Status == _activeFilter);
+    private int FilterCount(string filter) => filter == "All" ? State.Reports.Count : State.Reports.Count(report => report.Status == filter);
+    private string FilterClass(string filter) => _activeFilter == filter ? "border-[#216f7d] bg-[#216f7d] text-white" : "border-[#dce2de] text-[#596c72] hover:border-[#216f7d]";
+    private static string StatusClass(string status) => status switch { "Received" or "Assigned" => "bg-[#e4f1f2] text-[#216f7d]", "In Progress" => "bg-[#fbf1d4] text-[#8d6b13]", "Resolved" => "bg-[#e7efe4] text-[#4f754f]", _ => "bg-[#edf0eb] text-[#5f6e72]" };
+    protected override void OnInitialized() => State.SetAdmin(true);
+}

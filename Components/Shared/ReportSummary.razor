@@ -1,0 +1,37 @@
+<section class="rounded-lg border border-[#e2e5df] bg-white p-5 sm:p-6">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+            <h2 class="text-lg font-bold">@Report.Title</h2>
+            <p class="mt-1 text-xs text-[#77878d]">Report #CD-@Report.Id <span class="px-1">·</span> @Report.Location <span class="px-1">·</span> Submitted @Report.Submitted</p>
+        </div>
+        <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold @StatusClass(Report.Status)">@Report.Status</span>
+    </div>
+    <div class="mt-5"><ReportProgress Report="Report" ShowHints="false" /></div>
+    <p class="mt-4 rounded-md bg-[#fbf4df] px-3 py-2.5 text-xs text-[#96751d]">@Report.Summary</p>
+</section>
+
+<section class="mt-5 rounded-lg border border-[#e2e5df] bg-white p-5 sm:p-6">
+    <h2 class="font-semibold">Timeline</h2>
+    <ol class="mt-4 space-y-4">
+        @foreach (var update in Report.Updates.OrderByDescending(item => item.Sequence))
+        {
+            <li class="flex gap-3">
+                <span class="mt-1.5 size-2 shrink-0 rounded-full @(update.Sequence == Report.Updates.Max(item => item.Sequence) ? "bg-[#dfae2f]" : "bg-[#216f7d]")"></span>
+                <span class="min-w-0 flex-1"><strong class="block text-sm">@update.Title</strong><span class="mt-0.5 block text-xs text-[#7b898e]">@update.Detail</span></span>
+                <span class="shrink-0 text-[11px] text-[#819096]">@update.Date</span>
+            </li>
+        }
+    </ol>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public HelpdeskState.ReportRecord Report { get; set; } = default!;
+
+    private static string StatusClass(string status) => status switch
+    {
+        "Received" or "Assigned" => "bg-[#e4f1f2] text-[#216f7d]",
+        "In Progress" => "bg-[#fbf1d4] text-[#8d6b13]",
+        "Resolved" => "bg-[#e7efe4] text-[#4f754f]",
+        _ => "bg-[#edf0eb] text-[#5f6e72]"
+    };
+}

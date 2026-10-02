@@ -1,0 +1,42 @@
+@inject HelpdeskState State
+@inject NavigationManager Navigation
+
+<aside class="flex w-full shrink-0 flex-col bg-[#216f7d] text-white md:min-h-screen md:w-60">
+    <div class="flex items-center gap-3 px-4 py-4 md:px-5 md:pt-6">
+        <span class="grid size-8 place-items-center rounded-md bg-[#dfae2f] font-black text-[#174c57]">C</span>
+        <span class="font-semibold">CasaDesk</span>
+        @if (State.IsAdmin) { <span class="ml-auto rounded-full bg-[#dfae2f] px-2 py-1 text-[10px] font-bold uppercase text-[#174c57]">Admin</span> }
+    </div>
+    <nav class="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-1 md:flex-col md:py-7" aria-label="Main navigation">
+        @if (State.IsAdmin)
+        {
+            <NavLink href="/admin" Match="NavLinkMatch.All" class="shrink-0 rounded-md px-3 py-2.5 text-xs font-medium text-white/90 hover:bg-white/10 md:w-full" ActiveClass="bg-[#dfae2f] !text-[#203137]">Report Pipeline</NavLink>
+            <NavLink href="/admin/reports/1042" class="shrink-0 rounded-md px-3 py-2.5 text-xs font-medium text-white/90 hover:bg-white/10 md:w-full" ActiveClass="bg-[#dfae2f] !text-[#203137]">Report Detail</NavLink>
+        }
+        else
+        {
+            <NavLink href="/" Match="NavLinkMatch.All" class="shrink-0 rounded-md px-3 py-2.5 text-xs font-medium text-white/90 hover:bg-white/10 md:w-full" ActiveClass="bg-[#dfae2f] !text-[#203137]">My Reports</NavLink>
+            <NavLink href="/report/new" class="shrink-0 rounded-md px-3 py-2.5 text-xs font-medium text-white/90 hover:bg-white/10 md:w-full" ActiveClass="bg-[#dfae2f] !text-[#203137]">Report an Issue</NavLink>
+            <NavLink href="/profile" class="shrink-0 rounded-md px-3 py-2.5 text-xs font-medium text-white/90 hover:bg-white/10 md:w-full" ActiveClass="bg-[#dfae2f] !text-[#203137]">My Profile</NavLink>
+        }
+    </nav>
+    <div class="hidden space-y-3 px-4 pb-5 md:block">
+        <button class="w-full rounded-md border border-white/50 px-3 py-2 text-xs hover:bg-white/10" @onclick="ToggleRole">Switch to @(State.IsAdmin ? "Resident" : "Admin") View</button>
+        <div class="flex items-center gap-3 rounded-md bg-white px-3 py-2 text-[#203137]">
+            <span class="grid size-8 place-items-center rounded-full bg-[#dfae2f] font-semibold text-white">@State.Initials</span>
+            <span class="min-w-0 text-xs"><strong class="block truncate">@State.ProfileName</strong><span class="block truncate text-[#718187]">@(State.IsAdmin ? "HOA Administrator" : State.ProfileAddress)</span></span>
+        </div>
+        <button class="text-xs text-white/75 hover:text-white" @onclick="SignOut">Sign out</button>
+    </div>
+    <button class="mx-3 mb-3 rounded-md border border-white/50 px-3 py-2 text-xs md:hidden" @onclick="ToggleRole">Switch to @(State.IsAdmin ? "Resident" : "Admin") View</button>
+</aside>
+
+@code {
+    private void ToggleRole()
+    {
+        State.SetAdmin(!State.IsAdmin);
+        Navigation.NavigateTo(State.IsAdmin ? "/admin" : "/");
+    }
+
+    private void SignOut() => State.Notify("Demo session signed out. Authentication is not connected yet.");
+}

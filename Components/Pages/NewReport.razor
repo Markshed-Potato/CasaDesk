@@ -1,0 +1,57 @@
+@page "/report/new"
+@inject HelpdeskState State
+@inject NavigationManager Navigation
+
+<PageTitle>CasaDesk | Report an Issue</PageTitle>
+<PageHeader Section="Report an Issue" Title="Report an Issue" Subtitle="Your report enters the pipeline at the Received stage." BackText="Back" BackHref="/" />
+
+<div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(250px,0.8fr)]">
+    <section class="rounded-lg border border-[#e2e5df] bg-white p-5 shadow-sm sm:p-6">
+        <form class="space-y-4" @onsubmit="SubmitReport" @onsubmit:preventDefault>
+            <fieldset><legend class="mb-2 text-xs font-semibold">Category</legend><div class="flex flex-wrap gap-2">@foreach (var category in HelpdeskState.Categories) { <button type="button" class="rounded-full border px-3 py-1.5 text-xs font-medium @CategoryClass(category)" @onclick="() => _category = category">@category</button> }</div></fieldset>
+            <div class="grid gap-4 sm:grid-cols-2"><label class="block text-xs font-semibold">Location<input class="@FieldClass" @bind="_location" placeholder="Block 4, Main Road" required /></label><label class="block text-xs font-semibold">Priority<select class="@FieldClass" @bind="_priority"><option>Normal</option><option>Urgent</option></select></label></div>
+            <label class="block text-xs font-semibold">Title<input class="@FieldClass" @bind="_title" placeholder="For example: Streetlight not working" required /></label>
+            <label class="block text-xs font-semibold">Description<textarea class="@FieldClass min-h-28 resize-y" @bind="_description" placeholder="Describe the problem and when it started." required></textarea></label>
+            <label class="relative flex min-h-24 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-[#d5a323] bg-[#fbf4df] px-4 py-4 text-center hover:bg-[#f8edca]"><InputFile class="absolute inset-0 h-full w-full cursor-pointer opacity-0" accept="image/png,image/jpeg" OnChange="HandlePhotoSelected" /><span class="text-sm font-semibold text-[#9a7415]">@(_photoName ?? "Click to upload a photo (optional)")</span><span class="mt-1 text-[11px] text-[#8c8c7e]">PNG or JPG, up to 5 MB</span></label>
+            <div class="flex justify-end gap-2"><a class="rounded-md border border-[#216f7d] px-4 py-2 text-sm font-semibold text-[#216f7d] hover:bg-[#e5efed]" href="/">Cancel</a><button type="submit" class="rounded-md bg-[#dfae2f] px-4 py-2 text-sm font-semibold hover:bg-[#d1a125]">Submit Report</button></div>
+        </form>
+    </section>
+    <aside class="space-y-4"><section class="rounded-lg border border-[#e2e5df] bg-white p-5"><h2 class="font-semibold">What happens next</h2><ol class="mt-4 space-y-4">@foreach (var step in HelpdeskState.NextSteps) { <li class="flex gap-3"><span class="mt-1 size-2 rounded-full bg-[#216f7d]"></span><span><strong class="block text-xs">@step.Title</strong><span class="mt-0.5 block text-xs text-[#7b898e]">@step.Detail</span></span></li> }</ol></section><section class="rounded-lg border border-[#e8c66b] bg-[#fbf4df] p-4"><h2 class="text-sm font-semibold">Emergency?</h2><p class="mt-1.5 text-xs leading-5 text-[#7b898e]">Call the security desk instead of filing a report.</p><a href="tel:5550100" class="mt-3 inline-flex rounded-md bg-[#dfae2f] px-3 py-2 text-xs font-semibold">Call Security Desk</a></section></aside>
+</div>
+
+@code {
+    private const string FieldClass = "mt-1.5 w-full rounded-md border border-[#dce2de] bg-white px-3 py-2.5 text-sm font-normal outline-none placeholder:text-[#9aa7aa] focus:border-[#216f7d] focus:ring-2 focus:ring-[#216f7d]/15";
+    private string _category = "Maintenance";
+    private string _priority = "Normal";
+    private string _location = "Block 4, Main Road";
+    private string _title = string.Empty;
+    private string _description = string.Empty;
+    private string? _photoName;
+
+    protected override void OnInitialized() => State.SetAdmin(false);
+
+    private string CategoryClass(string category) => _category == category ? "border-[#216f7d] bg-[#216f7d] text-white" : "border-[#dce2de] bg-white text-[#34464c] hover:border-[#216f7d]";
+
+    private void HandlePhotoSelected(InputFileChangeEventArgs args)
+    {
+        if (args.File.Size > 5 * 1024 * 1024)
+        {
+            _photoName = null;
+            State.Notify("Choose an image under 5 MB.");
+            return;
+        }
+        _photoName = args.File.Name;
+    }
+
+    private void SubmitReport()
+    {
+        if (string.IsNullOrWhiteSpace(_title) || string.IsNullOrWhiteSpace(_description) || string.IsNullOrWhiteSpace(_location))
+        {
+            State.Notify("Complete the title, location, and description before submitting.");
+            return;
+        }
+        var report = State.AddReport(_title, _category, _location, _priority, _description, _photoName);
+        State.Notify($"Report #CD-{report.Id} submitted.");
+        Navigation.NavigateTo($"/reports/{report.Id}");
+    }
+}

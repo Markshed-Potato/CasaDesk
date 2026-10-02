@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CasaDesk")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+04a9170827990a70ddba451ce93ed9a5d81e064a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0f4a6dd05a9d83ae573cb86941079fe28794da2")]
 [assembly: System.Reflection.AssemblyProductAttribute("CasaDesk")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CasaDesk")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

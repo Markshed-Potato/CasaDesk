@@ -1,0 +1,17 @@
+<div class="grid grid-cols-5 gap-1" aria-label="Report status: @Report.Status">
+    @foreach (var stage in HelpdeskState.Stages)
+    {
+        var stageIndex = Array.IndexOf(HelpdeskState.Stages, stage);
+        var currentIndex = Array.IndexOf(HelpdeskState.Stages, Report.Status);
+        <div class="min-w-0">
+            <div class="h-[3px] rounded-full @(stageIndex < currentIndex ? "bg-[#216f7d]" : stageIndex == currentIndex ? "bg-[#dfae2f]" : "bg-[#e3e7e1]")"></div>
+            <p class="mt-1.5 truncate text-[11px] font-semibold @(stageIndex == currentIndex ? "text-[#9a7415]" : stageIndex < currentIndex ? "text-[#203137]" : "text-[#63747a]")">@stage</p>
+            @if (ShowHints) { <p class="hidden text-[10px] text-[#819096] sm:block">@HelpdeskState.StageHint(stage)</p> }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public HelpdeskState.ReportRecord Report { get; set; } = default!;
+    [Parameter] public bool ShowHints { get; set; } = true;
+}

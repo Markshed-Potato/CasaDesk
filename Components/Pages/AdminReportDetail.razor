@@ -1,0 +1,46 @@
+@page "/admin/reports/{Id:int}"
+@inject HelpdeskState State
+@inject NavigationManager Navigation
+
+<PageTitle>CasaDesk | Admin Report Detail</PageTitle>
+@if (Report is { } report)
+{
+    <PageHeader Section="Admin Report Detail" Title="@report.Title" Subtitle="@DetailSubtitle(report)" BackText="Back to Pipeline" BackHref="/admin" />
+    <div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(270px,0.8fr)]">
+        <ReportSummary Report="report" />
+        <section class="rounded-lg border border-[#e2e5df] bg-white p-5">
+            <h2 class="font-semibold">Manage report</h2>
+            <label class="mt-4 block text-xs font-semibold">Assigned staff<select class="@FieldClass" value="@report.AssignedTo" @onchange="AssignStaff"><option>Unassigned</option><option>R. Santos</option><option>Jose Dela Cruz</option><option>M. Reyes</option></select></label>
+            <p class="mt-3 text-xs text-[#77878d]">Current stage: <strong class="text-[#203137]">@report.Status</strong></p>
+            <button class="mt-4 w-full rounded-md bg-[#dfae2f] px-3 py-2.5 text-sm font-semibold hover:bg-[#d1a125]" @onclick="AdvanceStatus">Advance to next stage</button>
+        </section>
+    </div>
+}
+
+@code {
+    private const string FieldClass = "mt-1.5 w-full rounded-md border border-[#dce2de] bg-white px-3 py-2.5 text-sm font-normal outline-none focus:border-[#216f7d]";
+    [Parameter] public int Id { get; set; }
+    private HelpdeskState.ReportRecord? Report => State.FindReport(Id);
+    private string DetailSubtitle(HelpdeskState.ReportRecord report) => $"Report #CD-{report.Id}. Submitted {report.Submitted} by {State.ProfileName}.";
+
+    protected override void OnInitialized() => State.SetAdmin(true);
+
+    protected override void OnParametersSet()
+    {
+        if (Report is null) Navigation.NavigateTo("/admin");
+    }
+
+    private void AssignStaff(ChangeEventArgs args)
+    {
+        if (Report is { } report) State.AssignStaff(report, args.Value?.ToString() ?? "Unassigned");
+    }
+
+    private void AdvanceStatus()
+    {
+        if (Report is not { } report) return;
+        if (!State.AdvanceStatus(report))
+        {
+            State.Notify(report.Status == "Received" && report.AssignedTo == "Unassigned" ? "Assign a staff member before advancing this report." : "This report is ready for resident confirmation.");
+        }
+    }
+}
